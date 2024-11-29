@@ -4,14 +4,20 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-function HelloWorld(){
-  return <h1 className="greeting">Hello,world!</h1>
-}
+  export function Profile() {
+    return (
+      <img
+        src="https://i.imgur.com/QIrZWGIs.jpg"
+        alt="Alan L. Hart"
+      />
+    );
+  }
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <HelloWorld/>
+    <Profile/>
   </React.StrictMode>
 );
 
