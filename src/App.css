@@ -1,0 +1,171 @@
+body {
+
+  font-family: Arial, ;
+
+  background-color: white;
+
+  margin: 0;
+
+  padding: 0;
+
+}
+
+
+
+.container {
+
+  max-width: 800px;
+
+  margin: 20px auto;
+
+  padding: 20px;
+
+  background-color: red;
+
+  border-radius: 8px;
+
+  color: white;
+
+}
+
+
+
+.header {
+
+  text-align: center;
+
+  margin-bottom: 40px;
+
+}
+
+
+
+.input-container {
+
+  display: flex;
+
+  gap: 10px;
+
+  margin-bottom: 20px;
+
+}
+
+
+
+.input,
+
+.select {
+
+  padding: 8px;
+
+  font-size: 16px;
+
+  border-radius: 4px;
+
+  border: 1px solid ;
+
+}
+
+
+
+.button {
+
+  background-color: blue;
+
+  color: white;
+
+  border: none;
+
+  border-radius: 4px;
+
+  padding: 8px 16px;
+
+  cursor: pointer;
+
+}
+
+
+
+.button:hover {
+
+  background-color: blue;
+
+}
+
+
+
+.delete-button {
+
+  background-color: red;
+
+  color: white;
+
+  border: none;
+
+  border-radius: 4px;
+
+  padding: 8px 16px;
+
+  cursor: pointer;
+
+}
+
+  
+
+.delete-button:hover {
+
+  background-color: red;
+
+}
+
+
+
+
+
+.task-table {
+
+  width: 100%;
+
+  border-collapse: collapse;
+
+}
+
+
+
+.task-table th,
+
+.task-table td {
+
+  border: 1px solid black;
+
+  padding: 10px;
+
+  text-align: center;
+
+}
+
+
+
+.task-table th {
+
+  background-color: black;
+
+  color: white;
+
+}
+
+
+
+.task-table tr:nth-child(even) {
+
+  background-color: blue;
+
+}
+
+
+
+.task-table tr:hover {
+
+  background-color: green;
+
+}
