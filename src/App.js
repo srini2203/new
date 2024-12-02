@@ -96,7 +96,7 @@ const App = () => {
 
           type="text"
 
-          placeholder="Add a new task..."
+          placeholder="Add a new task....."
 
           value={newTask}
 
