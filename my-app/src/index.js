@@ -4,20 +4,11 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-  export function Profile() {
-    return (
-      <img
-        src="https://i.imgur.com/QIrZWGIs.jpg"
-        alt="Alan L. Hart"
-      />
-    );
-  }
-
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <Profile/>
+    <App/>
   </React.StrictMode>
 );
 
