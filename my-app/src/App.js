@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect} from 'react';
 
 import './App.css'; 
-
-
 
 const App = () => {
 
@@ -18,9 +16,17 @@ const App = () => {
 
   const [editingText, setEditingText] = useState('');
 
+  useEffect(()=>{
+    const savedTasks=JSON.parse(localStorage.getItem('tasks'));
+    if(savedTasks){
+      setTasks(savedTasks);
+    }
+  },[]);
 
+  useEffect(()=>{
+    localStorage.setItem('tasks',JSON.stringify(tasks))
+  },[tasks])
 
-  
 
   const addTask = () => {
 
@@ -37,9 +43,6 @@ const App = () => {
   };
 
 
-
-  
-
   const deleteTask = (index) => {
 
     const updatedTasks = tasks.filter((_, i) => i !== index);
@@ -49,9 +52,6 @@ const App = () => {
   };
 
 
-
-  
-
   const startEditing = (index) => {
 
     setEditingIndex(index);
@@ -59,10 +59,6 @@ const App = () => {
     setEditingText(tasks[index].name);
 
   };
-
-
-
-  
 
   const saveTask = (index) => {
 
@@ -81,7 +77,6 @@ const App = () => {
     setEditingText('');
 
   };
-
 
 
   return (
@@ -221,8 +216,6 @@ const App = () => {
   );
 
 };
-
-
 
 export default App;
 
