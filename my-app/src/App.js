@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 
 import './App.css'; 
 
-
-
 const App = () => {
 
   const [tasks, setTasks] = useState([]); 
@@ -45,9 +43,6 @@ const App = () => {
   };
 
 
-
-  
-
   const deleteTask = (index) => {
 
     const updatedTasks = tasks.filter((_, i) => i !== index);
@@ -57,9 +52,6 @@ const App = () => {
   };
 
 
-
-  
-
   const startEditing = (index) => {
 
     setEditingIndex(index);
@@ -67,10 +59,6 @@ const App = () => {
     setEditingText(tasks[index].name);
 
   };
-
-
-
-  
 
   const saveTask = (index) => {
 
@@ -89,7 +77,6 @@ const App = () => {
     setEditingText('');
 
   };
-
 
 
   return (
@@ -229,8 +216,6 @@ const App = () => {
   );
 
 };
-
-
 
 export default App;
 
