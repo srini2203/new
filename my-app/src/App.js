@@ -2,7 +2,29 @@ import React, { useState,useEffect} from 'react';
 import {Button,TextField,Select,MenuItem,Table,TableContainer,TableCell,TableHead,TableRow,Paper, TableBody,Container}from '@mui/material';
 import {createTheme,ThemeProvider}from '@mui/material/styles';
 import './App.css'; 
+import posthog from 'posthog-js'
 
+useEffect(()=>{
+  posthog.init(
+    'phc_YGT2EnmKDc5ZAl2x3R9oIpXeQ564MXaPir2JNm0C4ve',
+    {
+      api_host:'https://us.i.posthog.com',
+      person_profiles:'identified_only'
+    }
+  );
+  posthog.identify(
+    '100',
+    {name:'Srini'}
+  );
+  posthog.identify(
+    '200',
+    {name:'Parasu'}
+  );
+  posthog.identify(
+    '300',
+    {name:Shakthi}
+  );
+},[]);
 const theme=createTheme({
   palette:{
     primary:{
@@ -53,13 +75,27 @@ const App = () => {
     setAssignedTo('');
     setTime('');
 
+    posthog.capture(
+      'task_added',
+      {
+        task_name:'NewTask',
+        taskAssignedTo:'assignedTo',
+        tasktime:'time'
+      }   
+    );
   };
 
   const deleteTask = (index) => {
     const updatedTasks = tasks.filter((_, i) => i !== index);
     setTasks(updatedTasks);
-  };
 
+    posthog.capture(
+      'task_deleted',
+      {
+        
+      }
+    );
+  };
 
   const startEditing = (index) => {
     setEditingIndex(index);
