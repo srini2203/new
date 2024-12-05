@@ -1,93 +1,55 @@
-import React, { useState,useEffect} from 'react';
-import {Button,TextField,Select,MenuItem,Table,TableContainer,TableCell,TableHead,TableRow,Paper, TableBody,Container}from '@mui/material';
-import {createTheme,ThemeProvider}from '@mui/material/styles';
-import './App.css'; 
-import posthog from 'posthog-js'
+import React, { useState, useEffect } from 'react';
+import {
+  Button,TextField,Select,MenuItem,Table,TableBody,TableCell,TableContainer,TableHead,TableRow,Paper,Container,ThemeProvider,createTheme,} from '@mui/material';
+import posthog from 'posthog-js';
 
-
-const theme=createTheme({
-  palette:{
-    primary:{
-      main:'#90caf9',
-    },
-    secondary:{
-      main:'#f50057',
-    },
-    background:{
-      default:'#42a5f5',
-    },
-  },
-  typography:{
-    fontSize:12,
-    fontFamily:'Roboto,sans-serif',
-    h1:{
-      color:'#f44336',
-    },
-  },
+posthog.init('phc_YGT2EnmKDc5ZAl2x3R9oIpXeQ564MXaPir2JNm0C4ve', {
+  api_host: 'https://us.i.posthog.com', 
+  debug: true, 
+  capture_pageview: true, 
 });
 
 const App = () => {
-  const [tasks, setTasks] = useState([]); 
   const [newTask, setNewTask] = useState('');
   const [assignedTo, setAssignedTo] = useState('');
   const [time, setTime] = useState('');
+  const [tasks, setTasks] = useState([]);
   const [editingIndex, setEditingIndex] = useState(null);
   const [editingText, setEditingText] = useState('');
 
-  useEffect(()=>{
-    posthog.init(
-      'phc_YGT2EnmKDc5ZAl2x3R9oIpXeQ564MXaPir2JNm0C4ve',
-      {
-        api_host:'https://us.i.posthog.com',
-        debug:'true',
-      }
-    );
-  },[]);
-
-  useEffect(()=>{
-    const savedTasks=JSON.parse(localStorage.getItem('tasks'));
-    if(savedTasks){
-      setTasks(savedTasks);
-    }
-  },[]);
-
-  useEffect(()=>{
-    localStorage.setItem('tasks',JSON.stringify(tasks))
-  },[tasks])
+  
+  const theme = createTheme({
+    palette: {
+      primary: { main: '#1976d2' },
+      secondary: { main: '#dc004e' },
+    },
+  });
 
   const addTask = () => {
-
     if (newTask.trim() === '' || assignedTo === '' || time === '') return;
 
-    setTasks([...tasks, {name:newTask.trim(),assignedTo,time}]);
+    const task = { name: newTask.trim(), assignedTo, time };
+    setTasks([...tasks, task]);
 
+    posthog.capture('add_task', {
+      taskName: task.name,
+      assignedTo: task.assignedTo,
+      time: task.time,
+    });
     setNewTask('');
     setAssignedTo('');
     setTime('');
-
-    posthog.capture(
-      'add_task',
-      {
-        task_name:'NewTask',
-        taskAssignedTo:'assignedTo',
-        tasktime:'time'
-      }   
-    );
   };
 
   const deleteTask = (index) => {
-    const taskToDelete=tasks[index]
-    const updatedTasks = tasks.filter((_, i) => i !== index);
-    setTasks(updatedTasks);
+    const taskToDelete = tasks[index];
+    setTasks(tasks.filter((_, i) => i !== index));
 
-    posthog.capture(
-      'task_deleted',
-      {
-        task_name:taskToDelete.name,
-        taskAssignedTo:taskToDelete.assignedTo,
-        task_time:taskToDelete.time  
-      }
-    );
+    posthog.capture('delete_task', {
+      taskName:taskToDelete.name,
+      assignedTo:taskToDelete.assignedTo,
+      time:taskToDelete.time,
+    });
   };
 
   const startEditing = (index) => {
@@ -96,97 +58,131 @@ const App = () => {
   };
 
   const saveTask = (index) => {
-
-    if (editingText.trim() === '') return;
-    const updatedTasks = tasks.map((task, i) =>
-      i === index ? { ...task, name: editingText.trim() } : task
-    );
-
+    const updatedTasks = [...tasks];
+    updatedTasks[index].name = editingText;
     setTasks(updatedTasks);
     setEditingIndex(null);
-    setEditingText('');
+
+    posthog.capture('edit_task', {
+      taskName: editingText,
+      previousTaskName: tasks[index].name,
+      assignedTo: tasks[index].assignedTo,
+      time: tasks[index].time,
+    });
   };
+
+  useEffect(() => {
+    posthog.capture('page_view', { path: window.location.pathname });
+  }, []);
 
   return (
     <ThemeProvider theme={theme}>
-      <Container maxWidth="xl" style={{backgroundColor:theme.palette.background.default,padding:'20px'}}>
-      <h1 style={{textAlign:'center'}}>Task Manager</h1>
-      
-      <div style={{margin:'20px',display:'flex',flexDirection:'column'}}>
-        <TextField 
-        label="Text"
-        variant="outlined"
-        value={newTask}
-        onChange={(e)=>{setNewTask(e.target.value)}}
-        style={{marginBottom :'20px'}}
-        />
-        <Select
-          value={assignedTo}
-          onChange={(e) => setAssignedTo(e.target.value)}
-          displayEmpty
-          fullWidth
-          style={{marginBottom:'20px'}}
-        >
-          <MenuItem value="">Assign To</MenuItem>
-          <MenuItem value="Sakthi">Sakthi</MenuItem>
-          <MenuItem value="Parasu">Parasu</MenuItem> 
-          <MenuItem value="Srini">Srini</MenuItem>
-        </Select>
-        <TextField
-          type="time"
-          value={time}
-          variant="outlined"
-          onChange={(e) => setTime(e.target.value)}
-          style={{marginBottom:'20px'}}
-          fullWidth
-        />
-        <Button onClick={addTask} variant="contained" color="primary" style={{marginBottom:'20px',maxWidth:'10px',textAlign:'center',display:'block',margin:'auto'}} >Add Task</Button>
-      </div>
+      <Container maxWidth="xl" style={{backgroundColor:'skyblue'}}>
+        <h1>Task Management App</h1>
+        <div style={{ marginBottom: '20px' }}>
+          <TextField
+            label="Task Name"
+            variant="outlined"
+            value={newTask}
+            onChange={(e) => setNewTask(e.target.value)}
+            style={{ marginBottom: '20px' }}
+            fullWidth
+          />
+          <Select
+            value={assignedTo}
+            onChange={(e) => setAssignedTo(e.target.value)}
+            displayEmpty
+            fullWidth
+            style={{ marginBottom: '20px' }}
+          >
+            <MenuItem value="">Assign To</MenuItem>
+            <MenuItem value="Sakthi">Sakthi</MenuItem>
+            <MenuItem value="Parasu">Parasu</MenuItem>
+            <MenuItem value="Srini">Srini</MenuItem>
+          </Select>
+          <TextField
+            type="time"
+            value={time}
+            variant="outlined"
+            onChange={(e) => setTime(e.target.value)}
+            style={{ marginBottom: '20px' }}
+            fullWidth
+          />
+          <Button
+            onClick={addTask}
+            variant="contained"
+            color="primary"
+            style={{
+              marginBottom: '20px',
+              display: 'block',
+              margin: 'auto',
+            }}
+          >
+            Add Task
+          </Button>
+        </div>
 
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Task name</TableCell>
-              <TableCell>Assigned to</TableCell>
-              <TableCell>Time</TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {tasks.map((task, index) => (
-            <TableRow key={index} >
-            {editingIndex === index ? (
-              <>
-                <TableCell>
-                <TextField
-                  value={editingText}
-                  onChange={(e) => setEditingText(e.target.value)}
-                  fullWidth
-                />
-                </TableCell>
-                <TableCell colSpan={2}></TableCell>
-                <TableCell><button onClick={() => saveTask(index)} variant="contained" color="Secondary">Save</button></TableCell>
-              </>
-
-            ) : (
-              <>
-                <TableCell>{task.name}</TableCell>
-                <TableCell>Assigned to: {task.assignedTo}</TableCell>
-                <TableCell>Time: {task.time}</TableCell>
-                <TableCell><button onClick={() => startEditing(index)} variant="Contained" color="Secondary">Edit</button>
-                <button onClick={() => deleteTask(index)} variant="Contained" color="Secondary">Delete</button></TableCell>
-              </>
-            )}
-
-          </TableRow>
-        ))}
-        </TableBody>
-        </Table>
-      </TableContainer>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Task Name</TableCell>
+                <TableCell>Assigned To</TableCell>
+                <TableCell>Time</TableCell>
+                <TableCell>Actions</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {tasks.map((task, index) => (
+                <TableRow key={index}>
+                  {editingIndex === index ? (
+                    <>
+                      <TableCell>
+                        <TextField
+                          value={editingText}
+                          onChange={(e) => setEditingText(e.target.value)}
+                          fullWidth
+                        />
+                      </TableCell>
+                      <TableCell colSpan={2}></TableCell>
+                      <TableCell>
+                        <Button
+                          onClick={() => saveTask(index)}
+                          variant="contained"
+                          color="secondary"
+                        >
+                          Save
+                        </Button>
+                      </TableCell>
+                    </>
+                  ) : (
+                    <>
+                      <TableCell>{task.name}</TableCell>
+                      <TableCell>{task.assignedTo}</TableCell>
+                      <TableCell>{task.time}</TableCell>
+                      <TableCell>
+                        <Button
+                          onClick={() => startEditing(index)}
+                          variant="contained"
+                          color="primary"
+                          style={{ marginRight: '10px' }}
+                        >Edit</Button>
+                        <Button
+                          onClick={() => deleteTask(index)}
+                          variant="contained"
+                          color="secondary"
+                        > Delete</Button>
+                      </TableCell>
+                    </>
+                  )}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </Container>
-      </ThemeProvider>
+    </ThemeProvider>
   );
 };
-export default App;
 
+export default App;
