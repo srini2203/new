@@ -17,6 +17,17 @@ const App = () => {
   const [editingIndex, setEditingIndex] = useState(null);
   const [editingText, setEditingText] = useState('');
 
+  useEffect(()=>{
+    localStorage.setItem('tasks',JSON.stringify(tasks));
+  },[tasks]);
+
+  useEffect(()=>{
+    const storedtasks=(localStorage.getItem('tasks'));
+    if(storedtasks){
+      setTasks(JSON.parse(storedtasks))
+    }
+  },[]);
+
   
   const theme = createTheme({
     palette: {
