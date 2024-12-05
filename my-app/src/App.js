@@ -4,27 +4,7 @@ import {createTheme,ThemeProvider}from '@mui/material/styles';
 import './App.css'; 
 import posthog from 'posthog-js'
 
-useEffect(()=>{
-  posthog.init(
-    'phc_YGT2EnmKDc5ZAl2x3R9oIpXeQ564MXaPir2JNm0C4ve',
-    {
-      api_host:'https://us.i.posthog.com',
-      person_profiles:'identified_only'
-    }
-  );
-  posthog.identify(
-    '100',
-    {name:'Srini'}
-  );
-  posthog.identify(
-    '200',
-    {name:'Parasu'}
-  );
-  posthog.identify(
-    '300',
-    {name:Shakthi}
-  );
-},[]);
+
 const theme=createTheme({
   palette:{
     primary:{
@@ -55,6 +35,16 @@ const App = () => {
   const [editingText, setEditingText] = useState('');
 
   useEffect(()=>{
+    posthog.init(
+      'phc_YGT2EnmKDc5ZAl2x3R9oIpXeQ564MXaPir2JNm0C4ve',
+      {
+        api_host:'https://us.i.posthog.com',
+        debug:'true',
+      }
+    );
+  },[]);
+
+  useEffect(()=>{
     const savedTasks=JSON.parse(localStorage.getItem('tasks'));
     if(savedTasks){
       setTasks(savedTasks);
@@ -69,14 +59,14 @@ const App = () => {
 
     if (newTask.trim() === '' || assignedTo === '' || time === '') return;
 
-    setTasks([...tasks, { name: newTask.trim(), assignedTo, time }]);
+    setTasks([...tasks, {name:newTask.trim(),assignedTo,time}]);
 
     setNewTask('');
     setAssignedTo('');
     setTime('');
 
     posthog.capture(
-      'task_added',
+      'add_task',
       {
         task_name:'NewTask',
         taskAssignedTo:'assignedTo',
@@ -86,13 +76,16 @@ const App = () => {
   };
 
   const deleteTask = (index) => {
+    const taskToDelete=tasks[index]
     const updatedTasks = tasks.filter((_, i) => i !== index);
     setTasks(updatedTasks);
 
     posthog.capture(
       'task_deleted',
       {
-        
+        task_name:taskToDelete.name,
+        taskAssignedTo:taskToDelete.assignedTo,
+        task_time:taskToDelete.time  
       }
     );
   };
@@ -147,7 +140,7 @@ const App = () => {
           style={{marginBottom:'20px'}}
           fullWidth
         />
-        <Button onClick={addTask} variant="contained" color="primary" style={{marginBottom:'20px'}}>Add Task</Button>
+        <Button onClick={addTask} variant="contained" color="primary" style={{marginBottom:'20px',maxWidth:'10px',textAlign:'center',display:'block',margin:'auto'}} >Add Task</Button>
       </div>
 
       <TableContainer component={Paper}>

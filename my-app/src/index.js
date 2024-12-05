@@ -12,7 +12,7 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <PostHogProvider 
-      apiKey={process.env.REACT_APP_PUBLIC_POSTHOG_KEY}
+      apiKey={process.env.process.env.REACT_APP_PUBLIC_POSTHOG_KEY}
       options={options}
     >
       <App/>
