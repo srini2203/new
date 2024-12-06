@@ -7,6 +7,7 @@ posthog.init('phc_YGT2EnmKDc5ZAl2x3R9oIpXeQ564MXaPir2JNm0C4ve', {
   api_host: 'https://us.i.posthog.com', 
   debug: true, 
   capture_pageview: true, 
+  enable_session_recording:true,
 });
 
 const App = () => {
@@ -16,19 +17,49 @@ const App = () => {
   const [tasks, setTasks] = useState([]);
   const [editingIndex, setEditingIndex] = useState(null);
   const [editingText, setEditingText] = useState('');
+  const [loggedInUser,setLoggedInUser]=useState('');
+  const [username,setUsername]=useState('');
+  const [password,setPassword]=useState('');
+  const [error,setError]=useState('');
+
+  useEffect(()=>{
+    const savedtasks=(localStorage.getItem('tasks'));
+    if(savedtasks){
+      setTasks(JSON.parse(savedtasks));
+    }
+  },[]);
 
   useEffect(()=>{
     localStorage.setItem('tasks',JSON.stringify(tasks));
   },[tasks]);
 
   useEffect(()=>{
-    const storedtasks=(localStorage.getItem('tasks'));
-    if(storedtasks){
-      setTasks(JSON.parse(storedtasks))
+    localStorage.getItem(JSON.parse(LoggedInUsers));
+    if(users){                                                  ///////
+      setLoggedInUser(user);
     }
   },[]);
 
-  
+  const handleLogin=()=>{
+    useEffect(()=>{
+        const users=localStorage.getItem(JSON.parse(users)) || {}
+        if (users[username]&& users[username]===password){
+            localStorage.setItem('loggedInUser',username);
+            onLogin(username);
+        }
+        else
+        {
+            setError('Invalid username and password',error);
+        }
+    });
+};
+  const handleLogout=()=>{
+    useEffect(()=>{                                          //////////
+      localStorage.removeItem('LoggedInUsers');
+      setLoggedInUsers=''; 
+    });
+
+  }
   const theme = createTheme({
     palette: {
       primary: { main: '#1976d2' },
@@ -86,10 +117,48 @@ const App = () => {
     posthog.capture('page_view', { path: window.location.pathname });
   }, []);
 
+  if(!LoggedInUser)
+  {
+    return(
+      <ThemeProvider theme={theme}>
+        <Container maxwidth='xl' backgroundColor='green'>
+            <Typography variant="h3" style={{marginBottom:'10px'}}>login</Typography>
+            {error && <Typography color="error">{error}</Typography>}
+            <div style={{marginBottom:'20px'}}>
+                <TextField
+                label="Enter username"
+                variant={outlined}
+                value={username}
+                onChange={(e)=> setUsername(e.target.value)}
+                style={{marginBottom:'20px'}}
+                />
+                <TextField
+                label="Enter your password"
+                variant={outlined}
+                value={password}
+                onChange={(e)=>setPassword(e.target.value)}
+                style={{marginBottom:'20px'}}
+                />
+                <Button 
+                onClick={handleLogin}
+                variant={contained}
+                style={{display:'block',margin:'auto',marginBottom:'20px'}}
+                >LOGIN</Button>
+            </div>
+        </Container>
+        </ThemeProvider>
+    );
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <Container maxWidth="xl" style={{backgroundColor:'skyblue'}}>
-        <h1>Task Management App</h1>
+        <Typography variant='h2'>Welcome to Task Management App</Typography>
+        <Button 
+        variant={contained}
+        onClick={handleLogout}
+        style={{display:'block',margin:'auto',marginBottom:'20px'}}
+        >LOGOUT</Button>
         <div style={{ marginBottom: '20px' }}>
           <TextField
             label="Task Name"
