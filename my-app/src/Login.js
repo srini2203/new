@@ -1,64 +1,59 @@
-import React from 'react';
-import {useState,useEffect} from 'react';
-import {Button,TextField,ThemeProvider,createTheme} from '@mui/material';
+Login.js
 
-const theme=createTheme({
-    palette:{
-        primary:'#b2a429',
-        secondary:'##00bcd4',
-    },
+import React, { useState } from 'react';
+import { Button, TextField, Container, Typography } from '@mui/material';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+
+const theme = createTheme({
+  palette: {
+    primary: { main: '#90caf9' },
+    secondary: { main: '#f50057' },
+  },
 });
 
-const Login=(onLogin)=>{
-    const [username,setUsername]=useState('');
-    const [password,setPassword]=useState('');
-    const [error,setError]=useState('');
+const Login = ({ onLogin }) => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
-    const handleLogin=()=>{
-        useEffect(()=>{
-            const users=localStorage.getItem(JSON.parse(users)) || {}
-            if (users[username]&& users[username]===password){
-                localStorage.setItem('loggedInUser',username);
-                onLogin(username);
-            }
-            else
-            {
-                setError('Invalid username and password',error);
-            }
-        });
-    };
-    return(
-        <ThemeProvider theme={theme}>
-        <Container maxwidth='xl' backgroundColor='green'>
-            <h1>LOGIN PAGE</h1>
-            <div style={{marginBottom:'20px'}}>
-                <TextField
-                label="Enter username"
-                variant={outlined}
-                value={username}
-                onChange={(e)=> setUsername(e.target.value)}
-                style={{marginBottom:'20px'}}
-                />
-                <TextField
-                label="Enter your password"
-                variant={outlined}
-                value={password}
-                onChange={(e)=>setPassword(e.target.value)}
-                style={{marginBottom:'20px'}}
-                />
-                <Button 
-                variant={contained}
-                onClick={handleLogin}
-                style={{display:'block',margin:'auto',marginBottom:'20px'}}
-                >LOGIN</Button>
-            </div>
-        </Container>
-        </ThemeProvider>
+  const handleLogin = () => {
+    const users = JSON.parse(localStorage.getItem('users')) || {};
+    if (users[username] && users[username] === password) {
+      localStorage.setItem('loggedInUser', username);
+      onLogin(username);
+    } else {
+      setError('Invalid username or password');
+    }
+  };
 
-    );
+  return (
+    <ThemeProvider theme={theme}>
+      <Container maxWidth="sm" style={{ marginTop: '100px', textAlign: 'center' }}>
+        <Typography variant="h4" style={{ marginBottom: '20px' }}>Login</Typography>
+        {error && <Typography color="error">{error}</Typography>}
+        <TextField
+          label="Username"
+          variant="outlined"
+          fullWidth
+          style={{ marginBottom: '20px' }}
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+        <TextField
+          label="Password"
+          type="password"
+          variant="outlined"
+          fullWidth
+          style={{ marginBottom: '20px' }}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <Button variant="contained" color="primary" fullWidth onClick={handleLogin}>
+          Login
+        </Button>
+      </Container>
+    </ThemeProvider>
+  );
 };
 
 export default Login;
-
-
-
