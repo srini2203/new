@@ -21,9 +21,9 @@ const theme = createTheme({
   },
 });
 
-const validUsers = ['Srini', 'Parasu', 'Sakthi'];
+const validUsers = ['Srini','Parasu','Sakthi'];
 
-const Login = ({ onLogin }) => {
+const Login = ({onLogin}) => {
   const [username, setUsername] = useState('');
 
   const handleLogin = () => {
@@ -38,7 +38,7 @@ const Login = ({ onLogin }) => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Container maxWidth="sm" style={{ marginTop: '50px', textAlign: 'center' }}>
+      <Container maxWidth="sm" style={{ marginTop:'50px',textAlign:'center' }}>
         <h1>Login</h1>
         <TextField
           label="Enter your username"

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Button, TextField, Table, TableContainer, TableCell, TableHead, TableRow, Paper, TableBody, Container } from '@mui/material';
+import React, {useState,useEffect } from 'react';
+import { Button,TextField,Table,TableContainer,TableCell,TableHead,TableRow,Paper,TableBody,Container } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import './App.css';
 import posthog from 'posthog-js';
@@ -8,20 +8,20 @@ import Login from './Login';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#90caf9',
+      main:'#90caf9',
     },
     secondary: {
-      main: '#f50057',
+      main:'#f50057',
     },
     background: {
-      default: '#42a5f5',
+      default:'#42a5f5',
     },
   },
   typography: {
     fontSize: 12,
-    fontFamily: 'Roboto, sans-serif',
+    fontFamily:'Roboto,sans-serif',
     h1: {
-      color: '#f44336',
+      color:'#f44336',
     },
   },
 });
@@ -36,8 +36,8 @@ const App = () => {
 
   useEffect(() => {
     posthog.init('phc_YGT2EnmKDc5ZAl2x3R9oIpXeQ564MXaPir2JNm0C4ve', {
-      api_host: 'https://us.i.posthog.com',
-      debug: 'true',
+      api_host:'https://us.i.posthog.com',
+      debug:'true',
     });
   }, []);
 
@@ -109,9 +109,9 @@ const App = () => {
           localStorage.setItem('loggedInUser', user); 
         }} />
       ) : (
-        <Container maxWidth="xl" style={{ backgroundColor: theme.palette.background.default, padding: '20px' }}>
+        <Container maxWidth="xl" style={{ backgroundColor: theme.palette.background.default, padding:'20px' }}>
           <h1 style={{ textAlign: 'center' }}>Task Manager</h1>
-          <div style={{ margin: '20px', display: 'flex', flexDirection: 'column' }}>
+          <div style={{ margin:'20px', display:'flex', flexDirection:'column' }}>
             <TextField
               label="New Task"
               variant="outlined"
@@ -130,7 +130,7 @@ const App = () => {
               onClick={addTask}
               variant="contained"
               color="primary"
-              style={{ marginBottom: '40px', maxWidth: '10px', textAlign: 'center', display: 'block', margin: 'auto' }}
+              style={{ marginBottom:'40px', maxWidth:'10px', textAlign:'center', display:'block', margin:'auto' }}
             >
               Add Task
             </Button>
@@ -138,7 +138,7 @@ const App = () => {
               onClick={handleLogout}
               color="secondary"
               variant="contained"
-              style={{ marginBottom: '20px', display: 'block', margin: 'auto', textAlign: 'center' }}
+              style={{ marginBottom:'20px', display:'block', margin:'auto', textAlign:'center' }}
             >
               Logout
             </Button>
