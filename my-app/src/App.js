@@ -1,5 +1,5 @@
-import React, {useState,useEffect } from 'react';
-import { Button,TextField,Table,TableContainer,TableCell,TableHead,TableRow,Paper,TableBody,Container } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Button, TextField, Table, TableContainer, TableCell, TableHead, TableRow, Paper, TableBody, Container } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import './App.css';
 import posthog from 'posthog-js';
@@ -8,20 +8,20 @@ import Login from './Login';
 const theme = createTheme({
   palette: {
     primary: {
-      main:'#90caf9',
+      main: '#90caf9',
     },
     secondary: {
-      main:'#f50057',
+      main: '#f50057',
     },
     background: {
-      default:'#42a5f5',
+      default: '#DCEDC8',
     },
   },
   typography: {
     fontSize: 12,
-    fontFamily:'Roboto,sans-serif',
+    fontFamily: 'Roboto, sans-serif',
     h1: {
-      color:'#f44336',
+      color: '#f44336',
     },
   },
 });
@@ -30,16 +30,29 @@ const App = () => {
   const [loggedInUser, setLoggedInUser] = useState(localStorage.getItem('loggedInUser') || null);
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState('');
-  const [editingIndex, setEditingIndex] = useState(null);
+  const [editingId, setEditingId] = useState(null); 
   const [editingText, setEditingText] = useState('');
   const [time, setTime] = useState('');
 
   useEffect(() => {
     posthog.init('phc_YGT2EnmKDc5ZAl2x3R9oIpXeQ564MXaPir2JNm0C4ve', {
-      api_host:'https://us.i.posthog.com',
-      debug:'true',
+      api_host: 'https://us.i.posthog.com',
+      debug: 'true',
     });
   }, []);
+
+  useEffect(() => {
+    if (loggedInUser) {
+      posthog.capture('pageview', {
+        page_name: 'App_page',
+        user: loggedInUser,
+      });
+    } else {
+      posthog.capture('pageview', {
+        page_name: 'Login_page',
+      });
+    }
+  }, [loggedInUser]);
 
   useEffect(() => {
     const savedTasks = JSON.parse(localStorage.getItem('tasks'));
@@ -57,7 +70,12 @@ const App = () => {
   const addTask = () => {
     if (newTask.trim() === '') return;
 
-    const newTaskObject = { name: newTask.trim(), user: loggedInUser, time };
+    const newTaskObject = { 
+      id: Date.now(), 
+      name: newTask.trim(), 
+      user: loggedInUser, 
+      time 
+    };
     setTasks([...tasks, newTaskObject]);
     setNewTask('');
     setTime('');
@@ -69,9 +87,28 @@ const App = () => {
     });
   };
 
-  const deleteTask = (index) => {
-    const taskToDelete = tasks[index];
-    const updatedTasks = tasks.filter((_, i) => i !== index);
+  const startEditing = (id) => {
+    setEditingId(id);
+    const taskToEdit = tasks.find((task) => task.id === id);
+    if (taskToEdit) {
+      setEditingText(taskToEdit.name);
+    }
+  };
+
+  const saveTask = () => {
+    if (editingText.trim() === '') return;
+
+    const updatedTasks = tasks.map((task) =>
+      task.id === editingId ? { ...task, name: editingText.trim() }:task
+    );
+    setTasks(updatedTasks);
+    setEditingId(null);
+    setEditingText('');
+  };
+
+  const deleteTask = (id) => {
+    const taskToDelete = tasks.find((task) => task.id === id);
+    const updatedTasks = tasks.filter((task) => task.id !== id);
     setTasks(updatedTasks);
 
     posthog.capture('task_deleted', {
@@ -80,34 +117,20 @@ const App = () => {
     });
   };
 
-  const startEditing = (index) => {
-    setEditingIndex(index);
-    setEditingText(tasks[index].name);
-  };
-
-  const saveTask = (index) => {
-    if (editingText.trim() === '') return;
-
-    const updatedTasks = tasks.map((task, i) =>
-      i === index ? { ...task, name: editingText.trim() } : task
-    );
-    setTasks(updatedTasks);
-    setEditingIndex(null);
-    setEditingText('');
-  };
-
   const handleLogout = () => {
     setLoggedInUser(null);
-    localStorage.removeItem('loggedInUser'); 
+    localStorage.removeItem('loggedInUser');
   };
 
   return (
     <ThemeProvider theme={theme}>
       {!loggedInUser ? (
-        <Login onLogin={(user) => {
-          setLoggedInUser(user);
-          localStorage.setItem('loggedInUser', user); 
-        }} />
+        <Login
+          onLogin={(user) => {
+            setLoggedInUser(user);
+            localStorage.setItem('loggedInUser', user);
+          }}
+        />
       ) : (
         <Container maxWidth="xl" style={{ backgroundColor: theme.palette.background.default, padding:'20px' }}>
           <h1 style={{ textAlign: 'center' }}>Task Manager</h1>
@@ -130,7 +153,7 @@ const App = () => {
               onClick={addTask}
               variant="contained"
               color="primary"
-              style={{ marginBottom:'40px', maxWidth:'10px', textAlign:'center', display:'block', margin:'auto' }}
+              style={{ marginBottom: '40px', maxWidth: '10px', textAlign: 'center', display: 'block'}}
             >
               Add Task
             </Button>
@@ -138,7 +161,7 @@ const App = () => {
               onClick={handleLogout}
               color="secondary"
               variant="contained"
-              style={{ marginBottom:'20px', display:'block', margin:'auto', textAlign:'center' }}
+              style={{ marginBottom: '20px', display: 'block', margin: 'auto', textAlign: 'center' }}
             >
               Logout
             </Button>
@@ -154,10 +177,10 @@ const App = () => {
               </TableHead>
               <TableBody>
                 {tasks
-                  .filter((task) => task.user === loggedInUser) 
-                  .map((task, index) => (
-                    <TableRow key={index}>
-                      {editingIndex === index ? (
+                  .filter((task) => task.user === loggedInUser)
+                  .map((task) => (
+                    <TableRow key={task.id}>
+                      {editingId === task.id ? (
                         <>
                           <TableCell>
                             <TextField
@@ -167,7 +190,7 @@ const App = () => {
                             />
                           </TableCell>
                           <TableCell>
-                            <Button onClick={() => saveTask(index)} variant="contained" color="secondary">
+                            <Button onClick={saveTask} variant="contained" color="secondary">
                               Save
                             </Button>
                           </TableCell>
@@ -177,10 +200,10 @@ const App = () => {
                           <TableCell>{task.name}</TableCell>
                           <TableCell>{task.time}</TableCell>
                           <TableCell>
-                            <Button onClick={() => startEditing(index)} variant="contained" color="secondary">
+                            <Button onClick={() => startEditing(task.id)} variant="contained" color="secondary" style={{marginRight:'20px'}}>
                               Edit
                             </Button>
-                            <Button onClick={() => deleteTask(index)} variant="contained" color="secondary">
+                            <Button onClick={() => deleteTask(task.id)} variant="contained" color="secondary">
                               Delete
                             </Button>
                           </TableCell>
