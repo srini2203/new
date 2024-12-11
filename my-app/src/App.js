@@ -172,9 +172,9 @@ const App = () => {
               onClick={addTask}
               variant="contained"
               color="primary"
-              style={{ marginBottom: '40px', maxWidth: '10px',textAlign:'center',display:'inline-flex',margin:'auto'}}
+              style={{ textAlign:'center',margin:'auto',padding:'5px 10px'}}
             >
-              AddTask
+              Add Task
             </Button>
             <Box
             sx={{
