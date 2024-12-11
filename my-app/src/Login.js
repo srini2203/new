@@ -21,19 +21,19 @@ const theme = createTheme({
   },
 });
 
-const validUsers = ['Srini','Parasu','Sakthi'];
+const validUsers = ['100','200','300'];
 
 const Login = ({onLogin}) => {
  
-  const [username, setUsername] = useState('');
+  const [userid, setUserId] = useState('');
 
   const handleLogin = () => {
-    if (validUsers.includes(username)) {
-      onLogin(username);
-      posthog.identify(username); 
-      posthog.capture('user_logged_in', { username });
+    if (validUsers.includes(userid)) {
+      onLogin(userid);
+      posthog.identify(userid); 
+      posthog.capture('user_logged_in', { userid});
     } else {
-      alert('Invalid username. Please try again.');
+      alert('Invalid userid. Please try again.');
     }
   };
 
@@ -42,10 +42,10 @@ const Login = ({onLogin}) => {
       <Container maxWidth="sm" style={{ marginTop:'50px',textAlign:'center' }}>
         <h1>Login</h1>
         <TextField
-          label="Enter your username"
+          label="Enter your userid"
           variant="outlined"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          value={userid}
+          onChange={(e) => setUserId(e.target.value)}
           fullWidth
           style={{ marginBottom: '20px' }}
         />

@@ -37,12 +37,13 @@ const App = () => {
   useEffect(() => {
     posthog.init('phc_YGT2EnmKDc5ZAl2x3R9oIpXeQ564MXaPir2JNm0C4ve', {
       api_host: 'https://us.i.posthog.com',
-      debug: 'true',
+      disable_session_recording: true,
     });
   }, []);
 
   useEffect(() => {
     if (loggedInUser) {
+      
       posthog.capture('pageview', {
         page_name: 'App_page',
         user: loggedInUser,
