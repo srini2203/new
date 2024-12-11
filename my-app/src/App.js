@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, TextField, Table, TableContainer, TableCell, TableHead, TableRow, Paper, TableBody, Container } from '@mui/material';
+import { Button, TextField, Table, TableContainer, TableCell, TableHead, TableRow, Paper, TableBody, Container, Box } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import './App.css';
 import posthog from 'posthog-js';
@@ -43,11 +43,17 @@ const App = () => {
 
   useEffect(() => {
     if (loggedInUser) {
-      
       posthog.capture('pageview', {
         page_name: 'App_page',
         user: loggedInUser,
       });
+      posthog.startSessionRecording();
+      const stopTimer=setTimeout(()=>{
+        posthog.stopSessionRecording()
+      },36000);
+
+      return()=>clearTimeout(stopTimer);
+
     } else {
       posthog.capture('pageview', {
         page_name: 'Login_page',
@@ -86,6 +92,12 @@ const App = () => {
       assigned_user: loggedInUser,
       task_time: time,
     });
+
+    posthog.startSessionRecording();
+      const stopTimer=setTimeout(()=>{
+        posthog.stopSessionRecording()
+      },36000);
+      return()=>clearTimeout(stopTimer);
   };
 
   const startEditing = (id) => {
@@ -116,6 +128,12 @@ const App = () => {
       task_name: taskToDelete.name,
       assigned_user: taskToDelete.user,
     });
+
+    posthog.startSessionRecording();
+      const stopTimer=setTimeout(()=>{
+        posthog.stopSessionRecording()
+      },36000);
+      return()=>clearTimeout(stopTimer)
   };
 
   const handleLogout = () => {
@@ -154,18 +172,27 @@ const App = () => {
               onClick={addTask}
               variant="contained"
               color="primary"
-              style={{ marginBottom: '40px', maxWidth: '10px', textAlign: 'center', display: 'block'}}
+              style={{ marginBottom: '40px', maxWidth: '10px',textAlign:'center',display:'inline-flex',margin:'auto'}}
             >
-              Add Task
+              AddTask
             </Button>
+            <Box
+            sx={{
+              position:'absolute',
+              top:'20px',
+              right:'200px',
+              zIndex:1,
+            }}
+            >
             <Button
               onClick={handleLogout}
               color="secondary"
               variant="contained"
-              style={{ marginBottom: '20px', display: 'block', margin: 'auto', textAlign: 'center' }}
-            >
+              style={{ marginBottom: '20px', display: 'block', marginLeft: 'auto', textAlign: 'center',}}
+            >  
               Logout
             </Button>
+            </Box>
           </div>
           <TableContainer component={Paper}>
             <Table>
