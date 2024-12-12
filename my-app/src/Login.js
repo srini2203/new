@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, TextField, Container } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import posthog from 'posthog-js';
+import posthog from 'posthog-js'
 
 const theme = createTheme({
   palette: {
@@ -14,26 +14,36 @@ const theme = createTheme({
   },
   typography: {
     fontSize: 12,
-    fontFamily: 'Roboto,sans-serif',
+    fontFamily: 'Roboto, sans-serif',
     h1: {
       color: '#f44336',
     },
   },
 });
 
-const validUsers = ['100','200','300'];
-
 const Login = ({onLogin}) => {
- 
-  const [userid, setUserId] = useState('');
+  const [username, setUserName] = useState('');
+
+  const validUsers = {
+    srini:'01',
+    sakthi:'02',
+    parasu:'03',
+  };
 
   const handleLogin = () => {
-    if (validUsers.includes(userid)) {
-      onLogin(userid);
-      posthog.identify(userid); 
-      posthog.capture('user_logged_in', { userid});
+    const trimmedUsername = username.trim();
+    if (validUsers[trimmedUsername]) {
+      const user = {
+        username: trimmedUsername,
+        id: validUsers[trimmedUsername],
+      };
+      localStorage.setItem('loggedInUser', JSON.stringify(user)); 
+      onLogin(user);
+      posthog.identify(user.id,{
+        username:user.username,
+      });
     } else {
-      alert('Invalid userid. Please try again.');
+      alert('Invalid username. Please try again.');
     }
   };
 
@@ -42,18 +52,18 @@ const Login = ({onLogin}) => {
       <Container maxWidth="sm" style={{ marginTop:'50px',textAlign:'center' }}>
         <h1>Login</h1>
         <TextField
-          label="Enter your userid"
+          label="Enter your username"
           variant="outlined"
-          value={userid}
-          onChange={(e) => setUserId(e.target.value)}
+          value={username}
+          onChange={(e) => setUserName(e.target.value)}
           fullWidth
-          style={{ marginBottom: '20px' }}
+          style={{ marginBottom:'20px' }}
         />
         <Button
           onClick={handleLogin}
           variant="contained"
           color="primary"
-          style={{ textAlign: 'center', margin: 'auto' }}
+          style={{ textAlign:'center', margin:'auto' }}
         >
           Login
         </Button>
@@ -62,4 +72,4 @@ const Login = ({onLogin}) => {
   );
 };
 
-export default Login;
+export default Login
