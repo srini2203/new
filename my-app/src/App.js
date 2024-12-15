@@ -43,9 +43,37 @@ const App = () => {
   useEffect(() => {
     posthog.init('phc_YGT2EnmKDc5ZAl2x3R9oIpXeQ564MXaPir2JNm0C4ve', {
       api_host: 'https://us.i.posthog.com',
-      disable_session_recording:false,
+      maskAllInputs:true,
+      maskAllText:false,
+      disable_session_recording:true,
     });
   }, []);
+
+  let sessionTimeout=null;
+
+  const startSessionRecordingWithTimeout = () => {
+    posthog.reset();
+    posthog.startSessionRecording();
+    console.log('Starting session recording...');
+  
+    if (sessionTimeout) {
+      clearTimeout(sessionTimeout);
+    }
+
+    sessionTimeout = setTimeout(() => {
+      posthog.stopSessionRecording();
+      console.log('Session recording stopped automatically after 5 minutes.');
+    }, 300000); 
+  };
+  
+  const stopSessionRecording = () => {
+    if (sessionTimeout) {
+      clearTimeout(sessionTimeout); 
+      sessionTimeout = null;
+    }
+    posthog.stopSessionRecording();
+    console.log('Session recording stopped manually.');
+  };
 
   useEffect(() => {
     if (loggedInUser) {
@@ -68,6 +96,8 @@ const App = () => {
   const addTask = () => {
     if (newTask.trim() === '') return;
 
+    startSessionRecordingWithTimeout();
+
     const newTaskObject = {
       id:Date.now(),
       name:newTask.trim(),
@@ -85,7 +115,7 @@ const App = () => {
       task_time:time,
     }); 
   };
-  
+
   const startEditing = (id) => {
     setEditingId(id);
     const taskToEdit = tasks.find((task) => task.id === id);
@@ -117,8 +147,10 @@ const App = () => {
   };
 
   const handleLogout = () => {
+    stopSessionRecording();
     setLoggedInUser(null);
     localStorage.removeItem('loggedInUser'); 
+    console.log("User logged out ")
   };
 
   return (

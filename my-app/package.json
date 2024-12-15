@@ -10,7 +10,7 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
-    "posthog-js": "^1.194.3",
+    "posthog-js": "^1.200.1",
     "posthog-node": "^4.3.1",
     "posthog-react-native": "^3.5.0",
     "react": "^18.3.1",
