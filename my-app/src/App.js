@@ -46,31 +46,16 @@ const App = () => {
       maskAllInputs:true,
       maskAllText:false,
       disable_session_recording:true,
+      session_idle_timeout_seconds:600,
     });
   }, []);
 
-  let sessionTimeout=null;
-
-  const startSessionRecordingWithTimeout = () => {
-    posthog.reset();
+  const startSessionRecording = () => {
     posthog.startSessionRecording();
     console.log('Starting session recording...');
-  
-    if (sessionTimeout) {
-      clearTimeout(sessionTimeout);
-    }
-
-    sessionTimeout = setTimeout(() => {
-      posthog.stopSessionRecording();
-      console.log('Session recording stopped automatically after 5 minutes.');
-    }, 300000); 
   };
   
   const stopSessionRecording = () => {
-    if (sessionTimeout) {
-      clearTimeout(sessionTimeout); 
-      sessionTimeout = null;
-    }
     posthog.stopSessionRecording();
     console.log('Session recording stopped manually.');
   };
@@ -96,7 +81,7 @@ const App = () => {
   const addTask = () => {
     if (newTask.trim() === '') return;
 
-    startSessionRecordingWithTimeout();
+    startSessionRecording();
 
     const newTaskObject = {
       id:Date.now(),
